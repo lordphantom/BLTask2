@@ -7,18 +7,40 @@
 //
 
 #import "FeedViewController.h"
+#import "UIFeedCell.h"
 
-@interface FeedViewController ()
+@interface FeedViewController () {
+	NSMutableArray *_apps;
+}
 
 @end
 
 @implementation FeedViewController
 
+#pragma mark - JSON handling
+
+- (void)fetchedData:(NSData *)responseData {
+    //parse out the json data
+    NSError* error;
+    NSDictionary* json = [[NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error] retain];
+	NSArray *entry = json[@"feed"][@"entry"];
+	
+	for (NSDictionary *d in entry) {
+		_apps[[entry indexOfObject:d]] = @{
+				  @"name":[d[@"im:name"][@"label"] copy],
+				  @"image":[d[@"im:image"][0][@"label"]copy]
+				  };
+	}
+	[self.tableView reloadData];
+}
+
+#pragma mark - Inherited methods
+
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        _apps = [[NSMutableArray alloc] initWithCapacity:100];
     }
     return self;
 }
@@ -33,13 +55,26 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 	
-	[self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+	[self.tableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
+	
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData* data = [[NSData dataWithContentsOfURL:
+						[NSURL URLWithString:@"https://itunes.apple.com/us/rss/toppaidapplications/limit=100/json"]] retain];
+        [self performSelectorOnMainThread:@selector(fetchedData:) withObject:data waitUntilDone:YES];
+		[data release];
+    });
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc
+{
+	[super dealloc];
+	[_apps release];
 }
 
 #pragma mark - Table view data source
@@ -53,25 +88,22 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 
-    return 1;
+    return _apps.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return 53 + 20;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UIFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 //	cell.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    UILabel *labelPosition = [[UILabel alloc] init];
-	labelPosition.translatesAutoresizingMaskIntoConstraints = NO;
-	labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.item];
-	[cell addSubview:labelPosition];
-	
-	UILabel *labelName;
-    
-	NSDictionary *dict = NSDictionaryOfVariableBindings(labelPosition);
-	[cell addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[labelPosition]" options:0 metrics:0 views:dict]];
-	[cell addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[labelPosition]-|" options:0 metrics:0 views:dict]];
+	cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
+	cell.labelName.text = _apps[indexPath.row][@"name"];
+	cell.urlString = _apps[indexPath.row][@"image"];
 	
     return cell;
 }
