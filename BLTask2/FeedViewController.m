@@ -22,7 +22,7 @@
 - (void)fetchedData:(NSData *)responseData {
     //parse out the json data
     NSError* error;
-    NSDictionary* json = [[NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error] retain];
+    NSDictionary* json = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
 	NSArray *entry = json[@"feed"][@"entry"];
 	
 	for (NSDictionary *d in entry) {
