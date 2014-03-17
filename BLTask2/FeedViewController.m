@@ -32,6 +32,17 @@
 				  };
 	}
 	[self.tableView reloadData];
+	[self.refreshControl endRefreshing];
+}
+
+- (void)refreshTable
+{
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData* data = [[NSData dataWithContentsOfURL:
+						 [NSURL URLWithString:@"https://itunes.apple.com/us/rss/toppaidapplications/limit=100/json"]] retain];
+        [self performSelectorOnMainThread:@selector(fetchedData:) withObject:data waitUntilDone:YES];
+		[data release];
+    });
 }
 
 #pragma mark - Inherited methods
@@ -58,12 +69,12 @@
 	self.title = @"Top 100";
 	[self.tableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
 	
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData* data = [[NSData dataWithContentsOfURL:
-						[NSURL URLWithString:@"https://itunes.apple.com/us/rss/toppaidapplications/limit=100/json"]] retain];
-        [self performSelectorOnMainThread:@selector(fetchedData:) withObject:data waitUntilDone:YES];
-		[data release];
-    });
+	UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+	self.refreshControl = refreshControl;
+	[refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+	[refreshControl release];
+	
+	[self refreshTable];
 }
 
 - (void)didReceiveMemoryWarning
