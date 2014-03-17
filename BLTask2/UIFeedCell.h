@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIFeedCell : UITableViewCell
+@interface UIFeedCell : UITableViewCell {
+	int _linkCount;
+}
 
 @property(retain,nonatomic) UILabel *labelPosition;
 @property(retain,nonatomic) UILabel *labelName;

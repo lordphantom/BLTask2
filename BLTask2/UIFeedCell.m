@@ -8,6 +8,8 @@
 
 #import "UIFeedCell.h"
 
+
+
 @implementation UIFeedCell
 
 #pragma mark - Other methods
@@ -25,17 +27,21 @@
 
 - (void)setUrlString:(NSString *)urlString
 {
+	_linkCount++;
 	_viewImage.image = nil;
 	_viewImage.alpha = 0;
 	_urlString = [urlString retain];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString]]];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			_viewImage.image = img;
-			[UIView animateWithDuration:0.3f animations:^{
-				_viewImage.alpha = 1;
-			}];
-		});
+		_linkCount--;
+		if (_linkCount == 0) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				_viewImage.image = img;
+				[UIView animateWithDuration:0.3f animations:^{
+					_viewImage.alpha = 1;
+				}];
+			});
+		}
 	});
 }
 
@@ -45,6 +51,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+		_linkCount = 0;
         _labelPosition = [[UILabel alloc] init];
 		_labelPosition.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelPosition.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
