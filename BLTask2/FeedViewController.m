@@ -55,6 +55,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 	
+	self.title = @"Top 100";
 	[self.tableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
 	
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

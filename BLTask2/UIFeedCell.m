@@ -12,11 +12,16 @@
 
 - (void)setUrlString:(NSString *)urlString
 {
+	_viewImage.image = nil;
+	_viewImage.alpha = 0;
 	_urlString = [urlString retain];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString]]];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			_viewImage.image = img;
+			[UIView animateWithDuration:0.3f animations:^{
+				_viewImage.alpha = 1;
+			}];
 		});
 	});
 }
@@ -39,8 +44,9 @@
 		
 		
 		NSDictionary *dict = NSDictionaryOfVariableBindings(_labelPosition,_labelName, _viewImage);
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName]" options:NSLayoutFormatAlignAllTop metrics:0 views:dict]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_viewImage(53)]-|" options:0 metrics:0 views:dict]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName]" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     }
     return self;
 }
