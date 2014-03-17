@@ -19,6 +19,7 @@
 		4794D14118D72FAC002C7A70 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4794D12918D72FAB002C7A70 /* UIKit.framework */; };
 		4794D14918D72FAC002C7A70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4794D14718D72FAC002C7A70 /* InfoPlist.strings */; };
 		4794D14B18D72FAC002C7A70 /* BLTask2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4794D14A18D72FAC002C7A70 /* BLTask2Tests.m */; };
+		4794D15618D73368002C7A70 /* FeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4794D15518D73368002C7A70 /* FeedViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,8 @@
 		4794D14618D72FAC002C7A70 /* BLTask2Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BLTask2Tests-Info.plist"; sourceTree = "<group>"; };
 		4794D14818D72FAC002C7A70 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4794D14A18D72FAC002C7A70 /* BLTask2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BLTask2Tests.m; sourceTree = "<group>"; };
+		4794D15418D73368002C7A70 /* FeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedViewController.h; sourceTree = "<group>"; };
+		4794D15518D73368002C7A70 /* FeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +112,8 @@
 			children = (
 				4794D13418D72FAC002C7A70 /* AppDelegate.h */,
 				4794D13518D72FAC002C7A70 /* AppDelegate.m */,
+				4794D15418D73368002C7A70 /* FeedViewController.h */,
+				4794D15518D73368002C7A70 /* FeedViewController.m */,
 				4794D13718D72FAC002C7A70 /* Images.xcassets */,
 				4794D12C18D72FAC002C7A70 /* Supporting Files */,
 			);
@@ -191,6 +196,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Kamil Zietek";
 				TargetAttributes = {
+					4794D12118D72FAB002C7A70 = {
+						DevelopmentTeam = 7TY694EMF8;
+					};
 					4794D13C18D72FAC002C7A70 = {
 						TestTargetID = 4794D12118D72FAB002C7A70;
 					};
@@ -240,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4794D13618D72FAC002C7A70 /* AppDelegate.m in Sources */,
+				4794D15618D73368002C7A70 /* FeedViewController.m in Sources */,
 				4794D13218D72FAC002C7A70 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -359,6 +368,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BLTask2/BLTask2-Prefix.pch";
 				INFOPLIST_FILE = "BLTask2/BLTask2-Info.plist";
@@ -372,6 +383,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BLTask2/BLTask2-Prefix.pch";
 				INFOPLIST_FILE = "BLTask2/BLTask2-Info.plist";

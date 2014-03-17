@@ -7,16 +7,24 @@
 //
 
 #import "AppDelegate.h"
+#import "FeedViewController.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
-    return YES;
+	self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+	// Override point for customization after application launch.
+	self.window.backgroundColor = [UIColor whiteColor];
+	
+	FeedViewController *feedVC = [[FeedViewController alloc] initWithStyle:UITableViewStylePlain];
+	UINavigationController *nav = [[UINavigationController alloc]  initWithRootViewController:feedVC];
+	self.window.rootViewController = nav;
+	[nav release];
+	[feedVC release];
+	
+	[self.window makeKeyAndVisible];
+	return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
