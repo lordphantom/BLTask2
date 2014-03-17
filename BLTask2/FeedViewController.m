@@ -11,6 +11,7 @@
 
 @interface FeedViewController () {
 	NSMutableArray *_apps;
+	NSMutableArray *_appsFiltered;
 }
 
 @end
@@ -45,6 +46,34 @@
     });
 }
 
+#pragma mark - Content Filtering
+-(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
+    // Update the filtered array based on the search text and scope.
+    // Remove all objects from the filtered search array
+    [_appsFiltered removeAllObjects];
+    // Filter the array using NSPredicate
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[c] '%@'",searchText];
+    _appsFiltered = [NSMutableArray arrayWithArray:[_apps filteredArrayUsingPredicate:predicate]];
+	[predicate release];
+	NSLog(@"%@",_appsFiltered);
+}
+
+#pragma mark - UISearchDisplayController Delegate Methods
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
+    [self filterContentForSearchText:searchString scope:nil];
+//     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
+    // Return YES to cause the search result table view to be reloaded.
+    return YES;
+}
+
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
+    // Tells the table data source to reload when scope bar selection changes
+    [self filterContentForSearchText:self.searchDisplayController.searchBar.text scope:nil];
+//     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
+    // Return YES to cause the search result table view to be reloaded.
+    return YES;
+}
+
 #pragma mark - Inherited methods
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -52,6 +81,7 @@
     self = [super initWithStyle:style];
     if (self) {
         _apps = [[NSMutableArray alloc] initWithCapacity:100];
+		_appsFiltered = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -74,7 +104,23 @@
 	[refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 	[refreshControl release];
 	
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0,70,320,44)];
+	[self.tableView setTableHeaderView:searchBar];
+	UISearchDisplayController *searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self];
+	searchDisplayController.delegate = self;
+	[searchBar release];
+	
 	[self refreshTable];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	UIView *searchBar = self.tableView.tableHeaderView;
+	CGRect newBounds = self.tableView.bounds;
+    newBounds.origin.y = newBounds.origin.y + searchBar.bounds.size.height;
+    self.tableView.bounds = newBounds;
 }
 
 - (void)didReceiveMemoryWarning
@@ -87,6 +133,7 @@
 {
 	[super dealloc];
 	[_apps release];
+	[_appsFiltered release];
 }
 
 #pragma mark - Table view data source
@@ -99,8 +146,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
-    return _apps.count;
+	int count = _apps.count;
+	if (tableView == self.searchDisplayController.searchResultsTableView) {
+		count = _appsFiltered.count;
+	}
+    return count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -112,10 +162,17 @@
 {
     static NSString *CellIdentifier = @"Cell";
     UIFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-//	cell.translatesAutoresizingMaskIntoConstraints = NO;
-	cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
-	cell.labelName.text = _apps[indexPath.row][@"name"];
-	cell.urlString = _apps[indexPath.row][@"image"];
+	
+	if (tableView == self.searchDisplayController.searchResultsTableView) {
+		cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
+		cell.labelName.text = _appsFiltered[indexPath.row][@"name"];
+		cell.urlString = _appsFiltered[indexPath.row][@"image"];
+	}
+	else {
+		cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
+		cell.labelName.text = _apps[indexPath.row][@"name"];
+		cell.urlString = _apps[indexPath.row][@"image"];
+	}
 	
     return cell;
 }
