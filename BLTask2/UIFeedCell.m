@@ -10,6 +10,19 @@
 
 @implementation UIFeedCell
 
+#pragma mark - Other methods
+
+- (void)updateFonts:(NSNotification*)notification
+{	
+	_labelPosition.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+	[_labelPosition invalidateIntrinsicContentSize];
+	
+	_labelName.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+	[_labelPosition invalidateIntrinsicContentSize];
+}
+
+#pragma mark - Getters and setters
+
 - (void)setUrlString:(NSString *)urlString
 {
 	_viewImage.image = nil;
@@ -26,16 +39,20 @@
 	});
 }
 
+#pragma mark - Inherited methods
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _labelPosition = [[UILabel alloc] init];
 		_labelPosition.translatesAutoresizingMaskIntoConstraints = NO;
+		_labelPosition.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
 		[self addSubview:_labelPosition];
 		
 		_labelName = [[UILabel alloc] init];
 		_labelName.translatesAutoresizingMaskIntoConstraints = NO;
+		_labelName.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
 		[self addSubview:_labelName];
 		
 		_viewImage = [[UIImageView alloc] init];
@@ -47,6 +64,8 @@
 		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName]" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFonts:) name:UIContentSizeCategoryDidChangeNotification object:nil];
     }
     return self;
 }
@@ -60,6 +79,8 @@
 
 - (void)dealloc {
 	[super dealloc];
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[_labelPosition release];
 	[_labelName release];
