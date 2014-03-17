@@ -32,7 +32,7 @@
 	_viewImage.alpha = 0;
 	_urlString = [urlString retain];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString]]];
+		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString]options:NSDataReadingMappedIfSafe error:nil]];
 		_linkCount--;
 		if (_linkCount == 0) {
 			dispatch_async(dispatch_get_main_queue(), ^{
