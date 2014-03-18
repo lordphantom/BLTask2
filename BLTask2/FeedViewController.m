@@ -29,7 +29,8 @@
 	for (NSDictionary *d in entry) {
 		_apps[[entry indexOfObject:d]] = @{
 				  @"name":[d[@"im:name"][@"label"] copy],
-				  @"image":[d[@"im:image"][0][@"label"]copy]
+				  @"image":[d[@"im:image"][0][@"label"]copy],
+				  @"position":@([entry indexOfObject:d]+1)
 				  };
 	}
 	[self.tableView reloadData];
@@ -48,29 +49,21 @@
 
 #pragma mark - Content Filtering
 -(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
-    // Update the filtered array based on the search text and scope.
-    // Remove all objects from the filtered search array
     [_appsFiltered removeAllObjects];
-    // Filter the array using NSPredicate
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[c] '%@'",searchText];
-    _appsFiltered = [NSMutableArray arrayWithArray:[_apps filteredArrayUsingPredicate:predicate]];
-	[predicate release];
-	NSLog(@"%@",_appsFiltered);
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[c] %@",searchText];
+    _appsFiltered = [[_apps filteredArrayUsingPredicate:predicate] mutableCopy];
 }
 
 #pragma mark - UISearchDisplayController Delegate Methods
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
     [self filterContentForSearchText:searchString scope:nil];
-//     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
-    // Return YES to cause the search result table view to be reloaded.
+
     return YES;
 }
 
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
-    // Tells the table data source to reload when scope bar selection changes
     [self filterContentForSearchText:self.searchDisplayController.searchBar.text scope:nil];
-//     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
-    // Return YES to cause the search result table view to be reloaded.
+	
     return YES;
 }
 
@@ -108,6 +101,9 @@
 	[self.tableView setTableHeaderView:searchBar];
 	UISearchDisplayController *searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self];
 	searchDisplayController.delegate = self;
+	searchDisplayController.searchResultsDataSource = self;
+	searchDisplayController.searchResultsDelegate = self;
+	[searchDisplayController.searchResultsTableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
 	[searchBar release];
 	
 	[self refreshTable];
@@ -163,16 +159,18 @@
     static NSString *CellIdentifier = @"Cell";
     UIFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 	
+	NSArray* apps;
 	if (tableView == self.searchDisplayController.searchResultsTableView) {
-		cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
-		cell.labelName.text = _appsFiltered[indexPath.row][@"name"];
-		cell.urlString = _appsFiltered[indexPath.row][@"image"];
+		apps = _appsFiltered;
 	}
 	else {
-		cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
-		cell.labelName.text = _apps[indexPath.row][@"name"];
-		cell.urlString = _apps[indexPath.row][@"image"];
+		apps = _apps;
 	}
+	
+	NSNumber *position = apps[indexPath.row][@"position"];
+	cell.labelPosition.text = [NSString stringWithFormat:@"%d",[position intValue]];
+	cell.labelName.text = apps[indexPath.row][@"name"];
+	cell.urlString = apps[indexPath.row][@"image"];
 	
     return cell;
 }
