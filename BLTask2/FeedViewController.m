@@ -12,6 +12,7 @@
 @interface FeedViewController () {
 	NSMutableArray *_apps;
 	NSMutableArray *_appsFiltered;
+	NSMutableDictionary *_imageCache;
 }
 
 @end
@@ -67,6 +68,30 @@
     return YES;
 }
 
+#pragma mark - Image Caching
+- (void)setImageFromURL:(NSString*)urlString onCell:(UIFeedCell*)cell
+{
+	if (_imageCache[urlString] == nil) {
+		cell.viewImage.image = nil;
+		cell.viewImage.alpha = 0;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]options:NSDataReadingMappedIfSafe error:nil]];
+			_imageCache[urlString] = img;
+			dispatch_async(dispatch_get_main_queue(), ^{
+				cell.viewImage.image = img;
+				[UIView animateWithDuration:0.3f animations:^{
+					cell.viewImage.alpha = 1;
+				}];
+			});
+		});
+	}
+	else {
+		cell.viewImage.alpha = 1;
+		cell.viewImage.image = _imageCache[urlString];
+	}
+	
+}
+
 #pragma mark - Inherited methods
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -75,6 +100,7 @@
     if (self) {
         _apps = [[NSMutableArray alloc] initWithCapacity:100];
 		_appsFiltered = [[NSMutableArray alloc] init];
+		_imageCache = [[NSMutableDictionary alloc] initWithCapacity:100];
     }
     return self;
 }
@@ -170,7 +196,8 @@
 	NSNumber *position = apps[indexPath.row][@"position"];
 	cell.labelPosition.text = [NSString stringWithFormat:@"%d",[position intValue]];
 	cell.labelName.text = apps[indexPath.row][@"name"];
-	cell.urlString = apps[indexPath.row][@"image"];
+//	cell.urlString = apps[indexPath.row][@"image"];
+	[self setImageFromURL:apps[indexPath.row][@"image"] onCell:cell];
 	
     return cell;
 }
