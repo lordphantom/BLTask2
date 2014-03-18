@@ -244,8 +244,6 @@
 		int cellL = indexPath.row * 2;
 		int cellR = cellL + 1;
 		
-		NSLog(@"Row: %d, L: %d, R: %d",indexPath.row,cellL,cellR);
-		
 		NSNumber *positionL = apps[cellL][@"position"];
 		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[positionL intValue]];
 		cell.labelName.text = apps[cellL][@"name"];
