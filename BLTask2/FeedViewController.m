@@ -11,6 +11,7 @@
 
 @interface FeedViewController () {
 	NSMutableArray *_apps;
+	NSMutableArray *_appsFiltered;
 }
 
 @end
@@ -28,7 +29,8 @@
 	for (NSDictionary *d in entry) {
 		_apps[[entry indexOfObject:d]] = @{
 				  @"name":[d[@"im:name"][@"label"] copy],
-				  @"image":[d[@"im:image"][0][@"label"]copy]
+				  @"image":[d[@"im:image"][0][@"label"]copy],
+				  @"position":@([entry indexOfObject:d]+1)
 				  };
 	}
 	[self.tableView reloadData];
@@ -45,6 +47,26 @@
     });
 }
 
+#pragma mark - Content Filtering
+-(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
+    [_appsFiltered removeAllObjects];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[c] %@",searchText];
+    _appsFiltered = [[_apps filteredArrayUsingPredicate:predicate] mutableCopy];
+}
+
+#pragma mark - UISearchDisplayController Delegate Methods
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
+    [self filterContentForSearchText:searchString scope:nil];
+
+    return YES;
+}
+
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
+    [self filterContentForSearchText:self.searchDisplayController.searchBar.text scope:nil];
+	
+    return YES;
+}
+
 #pragma mark - Inherited methods
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -52,6 +74,7 @@
     self = [super initWithStyle:style];
     if (self) {
         _apps = [[NSMutableArray alloc] initWithCapacity:100];
+		_appsFiltered = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -74,7 +97,26 @@
 	[refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 	[refreshControl release];
 	
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0,70,320,44)];
+	[self.tableView setTableHeaderView:searchBar];
+	UISearchDisplayController *searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self];
+	searchDisplayController.delegate = self;
+	searchDisplayController.searchResultsDataSource = self;
+	searchDisplayController.searchResultsDelegate = self;
+	[searchDisplayController.searchResultsTableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
+	[searchBar release];
+	
 	[self refreshTable];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	UIView *searchBar = self.tableView.tableHeaderView;
+	CGRect newBounds = self.tableView.bounds;
+    newBounds.origin.y = newBounds.origin.y + searchBar.bounds.size.height;
+    self.tableView.bounds = newBounds;
 }
 
 - (void)didReceiveMemoryWarning
@@ -87,6 +129,7 @@
 {
 	[super dealloc];
 	[_apps release];
+	[_appsFiltered release];
 }
 
 #pragma mark - Table view data source
@@ -99,8 +142,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
-    return _apps.count;
+	int count = _apps.count;
+	if (tableView == self.searchDisplayController.searchResultsTableView) {
+		count = _appsFiltered.count;
+	}
+    return count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -112,10 +158,19 @@
 {
     static NSString *CellIdentifier = @"Cell";
     UIFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-//	cell.translatesAutoresizingMaskIntoConstraints = NO;
-	cell.labelPosition.text = [NSString stringWithFormat:@"%d",indexPath.row+1];
-	cell.labelName.text = _apps[indexPath.row][@"name"];
-	cell.urlString = _apps[indexPath.row][@"image"];
+	
+	NSArray* apps;
+	if (tableView == self.searchDisplayController.searchResultsTableView) {
+		apps = _appsFiltered;
+	}
+	else {
+		apps = _apps;
+	}
+	
+	NSNumber *position = apps[indexPath.row][@"position"];
+	cell.labelPosition.text = [NSString stringWithFormat:@"%d",[position intValue]];
+	cell.labelName.text = apps[indexPath.row][@"name"];
+	cell.urlString = apps[indexPath.row][@"image"];
 	
     return cell;
 }
