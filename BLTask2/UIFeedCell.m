@@ -52,6 +52,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
 		_linkCount = 0;
+		
         _labelPosition = [[UILabel alloc] init];
 		_labelPosition.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelPosition.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
@@ -60,6 +61,8 @@
 		_labelName = [[UILabel alloc] init];
 		_labelName.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelName.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+		_labelName.numberOfLines = 3;
+		_labelName.lineBreakMode = NSLineBreakByTruncatingTail;
 		[self addSubview:_labelName];
 		
 		_viewImage = [[UIImageView alloc] init];
@@ -68,9 +71,11 @@
 		
 		
 		NSDictionary *dict = NSDictionaryOfVariableBindings(_labelPosition,_labelName, _viewImage);
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName]" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName(>=20)]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:_labelName attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:_labelName attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:-10]];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFonts:) name:UIContentSizeCategoryDidChangeNotification object:nil];
     }
