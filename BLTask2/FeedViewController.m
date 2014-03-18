@@ -70,6 +70,7 @@
 }
 
 #pragma mark - Image Caching
+
 - (void)setImageFromURL:(NSString*)urlString onCell:(UIFeedCell*)cell
 {
 	if (_imageCache[urlString] == nil) {
@@ -89,6 +90,32 @@
 	else {
 		cell.viewImage.alpha = 1;
 		cell.viewImage.image = _imageCache[urlString];
+	}
+	
+}
+
+- (void)setImageFromURL:(NSString*)urlString onCell:(UIFeedCellForIpad*)cell forSlot:(int)slot
+{
+	UIImageView *vImg = (slot == 0) ? cell.viewImage : cell.viewImage2;
+	
+	
+	if (_imageCache[urlString] == nil) {
+		vImg.image = nil;
+		vImg.alpha = 0;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]options:NSDataReadingMappedIfSafe error:nil]];
+			_imageCache[urlString] = img;
+			dispatch_async(dispatch_get_main_queue(), ^{
+				vImg.image = img;
+				[UIView animateWithDuration:0.3f animations:^{
+					vImg.alpha = 1;
+				}];
+			});
+		});
+	}
+	else {
+		vImg.alpha = 1;
+		vImg.image = _imageCache[urlString];
 	}
 	
 }
@@ -216,13 +243,13 @@
 		NSNumber *positionL = apps[cellL][@"position"];
 		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[positionL intValue]];
 		cell.labelName.text = apps[cellL][@"name"];
-		cell.urlString = apps[cellL][@"image"];
+		[self setImageFromURL:apps[cellL][@"image"] onCell:cell forSlot:0];
 		
 		if (cellR < apps.count) {
 			NSNumber *positionR = apps[cellR][@"position"];
 			cell.labelPosition2.text = [NSString stringWithFormat:@"%d",[positionR intValue]];
 			cell.labelName2.text = apps[cellR][@"name"];
-			cell.urlString2 = apps[cellR][@"image"];
+			[self setImageFromURL:apps[cellR][@"image"] onCell:cell forSlot:1];
 		}
 		else {
 			cell.labelName2.text = @"";
@@ -238,7 +265,7 @@
 		NSNumber *position = apps[indexPath.row][@"position"];
 		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[position intValue]];
 		cell.labelName.text = apps[indexPath.row][@"name"];
-		cell.urlString = apps[indexPath.row][@"image"];
+		[self setImageFromURL:apps[indexPath.row][@"image"] onCell:cell];
 		
 		return cell;
 	}
