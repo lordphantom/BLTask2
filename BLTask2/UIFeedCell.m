@@ -56,6 +56,7 @@
         _labelPosition = [[UILabel alloc] init];
 		_labelPosition.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelPosition.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+		[_labelPosition setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
 		[self addSubview:_labelPosition];
 		
 		_labelName = [[UILabel alloc] init];
