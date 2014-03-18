@@ -54,6 +54,7 @@
     [_appsFiltered removeAllObjects];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[c] %@",searchText];
     _appsFiltered = [[_apps filteredArrayUsingPredicate:predicate] mutableCopy];
+	NSLog(@"Found: %d",_appsFiltered.count);
 }
 
 #pragma mark - UISearchDisplayController Delegate Methods
@@ -204,14 +205,17 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 	int count = _apps.count;
+	
+	if (_apps.count == 0)
+		return 0;
+	
 	if (tableView == self.searchDisplayController.searchResultsTableView) {
 		count = _appsFiltered.count;
 	}
 	
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 	{
-		count = ((count/2) % 2)>0 ? (count/2) +1: (count/2);
-//		NSLog(@"count: %d, ipadCount: %d",count, ((count/2) % 2)>0 ? (count/2) +1: (count/2));
+		count = (count % 2 == 0)?count/2:(count/2)+1 ;
 	}
 	
     return count;
@@ -239,6 +243,8 @@
 		
 		int cellL = indexPath.row * 2;
 		int cellR = cellL + 1;
+		
+		NSLog(@"Row: %d, L: %d, R: %d",indexPath.row,cellL,cellR);
 		
 		NSNumber *positionL = apps[cellL][@"position"];
 		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[positionL intValue]];
