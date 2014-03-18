@@ -8,6 +8,7 @@
 
 #import "FeedViewController.h"
 #import "UIFeedCell.h"
+#import "UIFeedCellForIpad.h"
 
 @interface FeedViewController () {
 	NSMutableArray *_apps;
@@ -90,7 +91,10 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 	
 	self.title = @"Top 100";
-	[self.tableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		[self.tableView registerClass:[UIFeedCellForIpad class] forCellReuseIdentifier:@"Cell"];
+	else
+		[self.tableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
 	
 	UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
 	self.refreshControl = refreshControl;
@@ -103,7 +107,11 @@
 	searchDisplayController.delegate = self;
 	searchDisplayController.searchResultsDataSource = self;
 	searchDisplayController.searchResultsDelegate = self;
-	[searchDisplayController.searchResultsTableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
+	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		[searchDisplayController.searchResultsTableView registerClass:[UIFeedCellForIpad class] forCellReuseIdentifier:@"Cell"];
+	else
+		[searchDisplayController.searchResultsTableView registerClass:[UIFeedCell class] forCellReuseIdentifier:@"Cell"];
 	[searchBar release];
 	
 	[self refreshTable];
@@ -146,6 +154,13 @@
 	if (tableView == self.searchDisplayController.searchResultsTableView) {
 		count = _appsFiltered.count;
 	}
+	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		count = ((count/2) % 2)>0 ? (count/2) +1: (count/2);
+//		NSLog(@"count: %d, ipadCount: %d",count, ((count/2) % 2)>0 ? (count/2) +1: (count/2));
+	}
+	
     return count;
 }
 
@@ -157,8 +172,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    UIFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-	
+
 	NSArray* apps;
 	if (tableView == self.searchDisplayController.searchResultsTableView) {
 		apps = _appsFiltered;
@@ -167,12 +181,43 @@
 		apps = _apps;
 	}
 	
-	NSNumber *position = apps[indexPath.row][@"position"];
-	cell.labelPosition.text = [NSString stringWithFormat:@"%d",[position intValue]];
-	cell.labelName.text = apps[indexPath.row][@"name"];
-	cell.urlString = apps[indexPath.row][@"image"];
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		UIFeedCellForIpad *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+		
+		int cellL = indexPath.row * 2;
+		int cellR = cellL + 1;
+		NSLog(@"Cell L: %d, Cell R: %d", cellL, cellR);
+		
+		NSNumber *positionL = apps[cellL][@"position"];
+		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[positionL intValue]];
+		cell.labelName.text = apps[cellL][@"name"];
+		cell.urlString = apps[cellL][@"image"];
+		
+		if (cellR < apps.count) {
+			NSNumber *positionR = apps[cellR][@"position"];
+			cell.labelPosition2.text = [NSString stringWithFormat:@"%d",[positionR intValue]];
+			cell.labelName2.text = apps[cellR][@"name"];
+			cell.urlString2 = apps[cellR][@"image"];
+		}
+		else {
+			cell.labelName2.text = @"";
+			cell.labelPosition2.text = @"";
+			cell.urlString2 = nil;
+		}
+		
+		return cell;
+	}
+	else {
+		UIFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+		
+		NSNumber *position = apps[indexPath.row][@"position"];
+		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[position intValue]];
+		cell.labelName.text = apps[indexPath.row][@"name"];
+		cell.urlString = apps[indexPath.row][@"image"];
+		
+		return cell;
+	}
 	
-    return cell;
 }
 
 /*

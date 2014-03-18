@@ -21,6 +21,7 @@
 		4794D14B18D72FAC002C7A70 /* BLTask2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4794D14A18D72FAC002C7A70 /* BLTask2Tests.m */; };
 		4794D15618D73368002C7A70 /* FeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4794D15518D73368002C7A70 /* FeedViewController.m */; };
 		4794D15918D74374002C7A70 /* UIFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4794D15818D74374002C7A70 /* UIFeedCell.m */; };
+		4794D15F18D870DC002C7A70 /* UIFeedCellForIpad.m in Sources */ = {isa = PBXBuildFile; fileRef = 4794D15E18D870DC002C7A70 /* UIFeedCellForIpad.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		4794D15518D73368002C7A70 /* FeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedViewController.m; sourceTree = "<group>"; };
 		4794D15718D74374002C7A70 /* UIFeedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIFeedCell.h; sourceTree = "<group>"; };
 		4794D15818D74374002C7A70 /* UIFeedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIFeedCell.m; sourceTree = "<group>"; };
+		4794D15D18D870DC002C7A70 /* UIFeedCellForIpad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIFeedCellForIpad.h; sourceTree = "<group>"; };
+		4794D15E18D870DC002C7A70 /* UIFeedCellForIpad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIFeedCellForIpad.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +122,8 @@
 				4794D15518D73368002C7A70 /* FeedViewController.m */,
 				4794D15718D74374002C7A70 /* UIFeedCell.h */,
 				4794D15818D74374002C7A70 /* UIFeedCell.m */,
+				4794D15D18D870DC002C7A70 /* UIFeedCellForIpad.h */,
+				4794D15E18D870DC002C7A70 /* UIFeedCellForIpad.m */,
 				4794D13718D72FAC002C7A70 /* Images.xcassets */,
 				4794D12C18D72FAC002C7A70 /* Supporting Files */,
 			);
@@ -255,6 +260,7 @@
 				4794D13618D72FAC002C7A70 /* AppDelegate.m in Sources */,
 				4794D15918D74374002C7A70 /* UIFeedCell.m in Sources */,
 				4794D15618D73368002C7A70 /* FeedViewController.m in Sources */,
+				4794D15F18D870DC002C7A70 /* UIFeedCellForIpad.m in Sources */,
 				4794D13218D72FAC002C7A70 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,7 +385,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BLTask2/BLTask2-Prefix.pch";
 				INFOPLIST_FILE = "BLTask2/BLTask2-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -394,7 +402,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BLTask2/BLTask2-Prefix.pch";
 				INFOPLIST_FILE = "BLTask2/BLTask2-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -460,6 +470,7 @@
 				4794D15018D72FAC002C7A70 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4794D15118D72FAC002C7A70 /* Build configuration list for PBXNativeTarget "BLTask2Tests" */ = {
 			isa = XCConfigurationList;
@@ -468,6 +479,7 @@
 				4794D15318D72FAC002C7A70 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
