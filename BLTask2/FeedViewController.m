@@ -186,7 +186,6 @@
 		
 		int cellL = indexPath.row * 2;
 		int cellR = cellL + 1;
-		NSLog(@"Cell L: %d, Cell R: %d", cellL, cellR);
 		
 		NSNumber *positionL = apps[cellL][@"position"];
 		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[positionL intValue]];

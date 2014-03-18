@@ -48,9 +48,9 @@
 		if (_linkCount == 0) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				_viewImage.image = img;
-				[UIView animateWithDuration:0.3f animations:^{
+//				[UIView animateWithDuration:0.3f animations:^{
 					_viewImage.alpha = 1;
-				}];
+//				}];
 			});
 		}
 	});
@@ -75,9 +75,9 @@
 		if (_linkCount2 == 0) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				_viewImage2.image = img;
-				[UIView animateWithDuration:0.3f animations:^{
+//				[UIView animateWithDuration:0.3f animations:^{
 					_viewImage2.alpha = 1;
-				}];
+//				}];
 			});
 		}
 	});
@@ -103,11 +103,11 @@
 		[self addSubview:viewRight];
 		
 		NSDictionary *dict0 = NSDictionaryOfVariableBindings(viewLeft,viewRight);
-		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:viewLeft attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.5 constant:0]];
-		[viewRight addConstraint:[NSLayoutConstraint constraintWithItem:viewRight attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.5 constant:0]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[viewLeft][viewRight]|" options:0 metrics:0 views:dict0]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[viewLeft]|" options:0 metrics:0 views:dict0]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[viewRight]|" options:0 metrics:0 views:dict0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:viewLeft attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.5 constant:0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:viewRight attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:0.5 constant:0]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[viewLeft][viewRight]|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:viewRight attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
+		[self addConstraint:[NSLayoutConstraint constraintWithItem:viewLeft attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
 
 		/*
 		 left side
@@ -118,11 +118,14 @@
 		_labelPosition = [[UILabel alloc] init];
 		_labelPosition.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelPosition.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+		_labelPosition.backgroundColor = [UIColor whiteColor];
+		[_labelPosition setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
 		[viewLeft addSubview:_labelPosition];
 		
 		_labelName = [[UILabel alloc] init];
 		_labelName.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelName.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+		_labelName.backgroundColor = [UIColor whiteColor];
 		_labelName.numberOfLines = 3;
 		_labelName.lineBreakMode = NSLineBreakByTruncatingTail;
 		[viewLeft addSubview:_labelName];
@@ -133,7 +136,7 @@
 		
 		
 		NSDictionary *dict = NSDictionaryOfVariableBindings(_labelPosition,_labelName, _viewImage);
-		[viewLeft addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName(>=20)]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
+		[viewLeft addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:viewLeft attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_labelName attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:viewLeft attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
@@ -148,11 +151,14 @@
 		_labelPosition2 = [[UILabel alloc] init];
 		_labelPosition2.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelPosition2.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+		_labelPosition2.backgroundColor = [UIColor whiteColor];
+		[_labelPosition2 setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
 		[viewRight addSubview:_labelPosition2];
 		
 		_labelName2 = [[UILabel alloc] init];
 		_labelName2.translatesAutoresizingMaskIntoConstraints = NO;
 		_labelName2.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+		_labelName2.backgroundColor = [UIColor whiteColor];
 		_labelName2.numberOfLines = 3;
 		_labelName2.lineBreakMode = NSLineBreakByTruncatingTail;
 		[viewRight addSubview:_labelName2];
