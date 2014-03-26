@@ -72,7 +72,7 @@
 		
 		
 		NSDictionary *dict = NSDictionaryOfVariableBindings(_labelPosition,_labelName, _viewImage);
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName(>=20)]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(50)]-[_labelName(>=20)]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 		[self addConstraint:[NSLayoutConstraint constraintWithItem:_labelName attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];

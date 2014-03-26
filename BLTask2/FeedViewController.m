@@ -30,8 +30,9 @@
 	
 	for (NSDictionary *d in entry) {
 		_apps[[entry indexOfObject:d]] = @{
-				  @"name":[d[@"im:name"][@"label"] copy],
-				  @"image":[d[@"im:image"][0][@"label"]copy],
+				  @"name":d[@"im:name"][@"label"],
+				  @"image":d[@"im:image"][2][@"label"],
+				  @"imageHeight":d[@"im:image"][2][@"attributes"][@"height"],
 				  @"position":@([entry indexOfObject:d]+1)
 				  };
 	}
@@ -54,7 +55,7 @@
     [_appsFiltered removeAllObjects];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[c] %@",searchText];
     _appsFiltered = [[_apps filteredArrayUsingPredicate:predicate] mutableCopy];
-	NSLog(@"Found: %d",_appsFiltered.count);
+	NSLog(@"Found: %lu",(unsigned long)_appsFiltered.count);
 }
 
 #pragma mark - UISearchDisplayController Delegate Methods
@@ -104,9 +105,13 @@
 		vImg.image = nil;
 		vImg.alpha = 0;
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-			UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]options:NSDataReadingMappedIfSafe error:nil]];
+			UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]options:NSDataReadingMappedIfSafe error:nil] scale:2];
 			_imageCache[urlString] = img;
 			dispatch_async(dispatch_get_main_queue(), ^{
+				if (![cell.urlString isEqualToString:urlString] && slot==0)
+					return;
+				if (![cell.urlString2 isEqualToString:urlString] && slot==1)
+					return;
 				vImg.image = img;
 				[UIView animateWithDuration:0.3f animations:^{
 					vImg.alpha = 1;
@@ -204,7 +209,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	int count = _apps.count;
+	NSInteger count = _apps.count;
 	
 	if (_apps.count == 0)
 		return 0;
@@ -223,7 +228,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 53 + 20;
+	int imgSize = 50; //53 non retina; 50 retina
+	return imgSize + 20;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -241,18 +247,20 @@
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
 		UIFeedCellForIpad *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 		
-		int cellL = indexPath.row * 2;
-		int cellR = cellL + 1;
+		NSInteger cellL = indexPath.row * 2;
+		NSInteger cellR = cellL + 1;
 		
 		NSNumber *positionL = apps[cellL][@"position"];
 		cell.labelPosition.text = [NSString stringWithFormat:@"%d",[positionL intValue]];
 		cell.labelName.text = apps[cellL][@"name"];
+		cell.urlString = apps[cellL][@"image"];
 		[self setImageFromURL:apps[cellL][@"image"] onCell:cell forSlot:0];
 		
 		if (cellR < apps.count) {
 			NSNumber *positionR = apps[cellR][@"position"];
 			cell.labelPosition2.text = [NSString stringWithFormat:@"%d",[positionR intValue]];
 			cell.labelName2.text = apps[cellR][@"name"];
+			cell.urlString2 = apps[cellR][@"image"];
 			[self setImageFromURL:apps[cellR][@"image"] onCell:cell forSlot:1];
 		}
 		else {

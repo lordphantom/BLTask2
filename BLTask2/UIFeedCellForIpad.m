@@ -29,59 +29,59 @@
 
 #pragma mark - Getters and setters
 
-- (void)setUrlString:(NSString *)urlString
-{
-	if (urlString == nil) {
-		_viewImage.image = nil;
-		_viewImage.alpha = 0;
-		_urlString = nil;
-		return;
-	}
-	
-	_linkCount++;
-	_viewImage.image = nil;
-	_viewImage.alpha = 0;
-	_urlString = [urlString retain];
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString]options:NSDataReadingMappedIfSafe error:nil]];
-		_linkCount--;
-		if (_linkCount == 0) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				_viewImage.image = img;
-//				[UIView animateWithDuration:0.3f animations:^{
-					_viewImage.alpha = 1;
-//				}];
-			});
-		}
-	});
-}
+//- (void)setUrlString:(NSString *)urlString
+//{
+//	if (urlString == nil) {
+//		_viewImage.image = nil;
+//		_viewImage.alpha = 0;
+//		_urlString = nil;
+//		return;
+//	}
+//	
+//	_linkCount++;
+//	_viewImage.image = nil;
+//	_viewImage.alpha = 0;
+//	_urlString = [urlString retain];
+//	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString]options:NSDataReadingMappedIfSafe error:nil]];
+//		_linkCount--;
+//		if (_linkCount == 0) {
+//			dispatch_async(dispatch_get_main_queue(), ^{
+//				_viewImage.image = img;
+////				[UIView animateWithDuration:0.3f animations:^{
+//					_viewImage.alpha = 1;
+////				}];
+//			});
+//		}
+//	});
+//}
 
-- (void)setUrlString2:(NSString *)urlString
-{
-	if (urlString == nil) {
-		_viewImage2.image = nil;
-		_viewImage2.alpha = 0;
-		_urlString2 = nil;
-		return;
-	}
-	
-	_linkCount2++;
-	_viewImage2.image = nil;
-	_viewImage2.alpha = 0;
-	_urlString2 = [urlString retain];
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString2]options:NSDataReadingMappedIfSafe error:nil]];
-		_linkCount2--;
-		if (_linkCount2 == 0) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				_viewImage2.image = img;
-//				[UIView animateWithDuration:0.3f animations:^{
-					_viewImage2.alpha = 1;
-//				}];
-			});
-		}
-	});
-}
+//- (void)setUrlString2:(NSString *)urlString
+//{
+//	if (urlString == nil) {
+//		_viewImage2.image = nil;
+//		_viewImage2.alpha = 0;
+//		_urlString2 = nil;
+//		return;
+//	}
+//	
+//	_linkCount2++;
+//	_viewImage2.image = nil;
+//	_viewImage2.alpha = 0;
+//	_urlString2 = [urlString retain];
+//	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//		UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_urlString2]options:NSDataReadingMappedIfSafe error:nil]];
+//		_linkCount2--;
+//		if (_linkCount2 == 0) {
+//			dispatch_async(dispatch_get_main_queue(), ^{
+//				_viewImage2.image = img;
+////				[UIView animateWithDuration:0.3f animations:^{
+//					_viewImage2.alpha = 1;
+////				}];
+//			});
+//		}
+//	});
+//}
 
 #pragma mark - Inherited methods
 
@@ -136,11 +136,12 @@
 		
 		
 		NSDictionary *dict = NSDictionaryOfVariableBindings(_labelPosition,_labelName, _viewImage);
-		[viewLeft addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(53)]-[_labelName]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
+		[viewLeft addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition]-[_viewImage(50)]-[_labelName]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:viewLeft attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_labelName attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:viewLeft attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
 		[viewLeft addConstraint:[NSLayoutConstraint constraintWithItem:_labelName attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationLessThanOrEqual toItem:viewLeft attribute:NSLayoutAttributeRight multiplier:1 constant:-10]];
+		[viewLeft release];
 		
 		/*
 		 right side
@@ -169,11 +170,12 @@
 		
 		
 		NSDictionary *dict2 = NSDictionaryOfVariableBindings(_labelPosition2,_labelName2, _viewImage2);
-		[viewRight addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition2]-[_viewImage2(53)]-[_labelName2(>=20)]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict2]];
+		[viewRight addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_labelPosition2]-[_viewImage2(50)]-[_labelName2(>=20)]-|" options:NSLayoutFormatAlignAllCenterY metrics:0 views:dict2]];
 		[viewRight addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage2 attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:viewRight attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 		[viewRight addConstraint:[NSLayoutConstraint constraintWithItem:_viewImage2 attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_viewImage2 attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
 		[viewRight addConstraint:[NSLayoutConstraint constraintWithItem:_labelName2 attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:viewRight attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
 		[viewRight addConstraint:[NSLayoutConstraint constraintWithItem:_labelName2 attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationLessThanOrEqual toItem:viewRight attribute:NSLayoutAttributeRight multiplier:1 constant:-10]];
+		[viewRight release];
 		
 		/*
 		 other things
